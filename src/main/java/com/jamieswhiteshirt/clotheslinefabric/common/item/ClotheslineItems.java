@@ -1,10 +1,10 @@
-package com.jamieswhiteshirt.clotheslinefabric.common.item;
+package com.jamieswhiteshirt.clothesline.common.item;
 
-import com.jamieswhiteshirt.clotheslinefabric.api.NetworkManager;
-import com.jamieswhiteshirt.clotheslinefabric.api.NetworkManagerProvider;
-import com.jamieswhiteshirt.clotheslinefabric.api.Utility;
-import com.jamieswhiteshirt.clotheslinefabric.common.Util;
-import com.jamieswhiteshirt.clotheslinefabric.common.block.ClotheslineBlocks;
+import com.jamieswhiteshirt.clothesline.api.NetworkManager;
+import com.jamieswhiteshirt.clothesline.api.NetworkManagerProvider;
+import com.jamieswhiteshirt.clothesline.api.Utility;
+import com.jamieswhiteshirt.clothesline.common.Util;
+import com.jamieswhiteshirt.clothesline.common.block.ClotheslineBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -17,7 +17,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.RayTraceContext;
+import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 
 public class ClotheslineItems {
@@ -35,7 +35,7 @@ public class ClotheslineItems {
             if (world.getBlockState(to.getBlockPos()).getBlock() == ClotheslineBlocks.CLOTHESLINE_ANCHOR) {
                 Vec3d fromVec = Utility.midVec(from.getBlockPos());
                 Vec3d toVec = Utility.midVec(to.getBlockPos());
-                BlockHitResult hitResult = world.rayTrace(new RayTraceContext(fromVec, toVec, RayTraceContext.ShapeType.COLLIDER, RayTraceContext.FluidHandling.NONE, to.getPlayer()));
+                BlockHitResult hitResult = world.raycast(new RaycastContext(fromVec, toVec, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, to.getPlayer()));
                 if (hitResult.getType() == HitResult.Type.MISS) {
                     if (manager.connect(from.getBlockPos(), to.getBlockPos())) {
                         if (!Util.isCreativePlayer(to.getPlayer())) {
@@ -69,7 +69,7 @@ public class ClotheslineItems {
     }
 
     private static Item register(String id, Item item) {
-        return register(new Identifier("clothesline-fabric", id), item);
+        return register(new Identifier("clothesline", id), item);
     }
 
     private static Item register(Identifier id, Item item) {

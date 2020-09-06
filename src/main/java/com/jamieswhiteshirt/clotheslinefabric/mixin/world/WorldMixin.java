@@ -1,21 +1,21 @@
-package com.jamieswhiteshirt.clotheslinefabric.mixin.world;
+package com.jamieswhiteshirt.clothesline.mixin.world;
 
-import com.jamieswhiteshirt.clotheslinefabric.api.Line;
-import com.jamieswhiteshirt.clotheslinefabric.api.NetworkManagerProvider;
+import com.jamieswhiteshirt.clothesline.api.Line;
+import com.jamieswhiteshirt.clothesline.api.NetworkManagerProvider;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityContext;
+import net.minecraft.block.ShapeContext;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.ViewableWorld;
+import net.minecraft.world.CollisionView;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(World.class)
-public abstract class WorldMixin implements ViewableWorld, NetworkManagerProvider {
+public abstract class WorldMixin implements CollisionView, NetworkManagerProvider {
     @Override
-    public boolean canPlace(BlockState state, BlockPos pos, EntityContext entityContext) {
-        if (ViewableWorld.super.canPlace(state, pos, entityContext)) {
+    public boolean canPlace(BlockState state, BlockPos pos, ShapeContext shapeContext) {
+        if (CollisionView.super.canPlace(state, pos, shapeContext)) {
             VoxelShape shape = state.getCollisionShape(this, pos);
             if (!shape.isEmpty()) {
                 net.minecraft.util.math.Box bb = shape.offset(pos.getX(), pos.getY(), pos.getZ()).getBoundingBox();
@@ -27,7 +27,7 @@ public abstract class WorldMixin implements ViewableWorld, NetworkManagerProvide
                     .values(box::intersectsClosed)
                     .anyMatch(edge -> {
                         Line line = edge.getPathEdge().getLine();
-                        return shape.rayTrace(line.getFromVec(), line.getToVec(), pos) != null;
+                        return shape.raycast(line.getFromVec(), line.getToVec(), pos) != null;
                     });
                 return !intersects;
             }
